@@ -15,13 +15,19 @@ const Btree = struct {
             .element = 0,
         };
     }
+
+    pub fn init() Self {
+        var np = Btree.new();
+        var hoge = &[3]Btree{Btree.new(), Btree.new(), Btree.new()};
+        var huga = hoge[0..3];
+        np.child_ptr  = &huga;
+        return np;
+    }
+  
 };
 
 pub fn main() anyerror!void {
     std.debug.warn("Congratulations on your first step to writing perfect software in Zen.\n");
-    var np = Btree.new();
-    var hoge = &[3]Btree{Btree.new(), Btree.new(), Btree.new()};
-    var huga = hoge[0..3];
-    np.child_ptr  = &huga;
+    var root = Btree.init();
     _ = Btree.new();
 }
