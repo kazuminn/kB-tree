@@ -17,11 +17,11 @@ const Btree = struct {
     }
 
     pub fn init() Self {
-        var np = Btree.new();
-        var hoge = &[3]Btree{Btree.new(), Btree.new(), Btree.new()};
-        var huga = hoge[0..3];
-        np.child_ptr  = &huga;
-        return np;
+        var elements_array = &[3]Btree{Btree.new(), Btree.new(), Btree.new()};
+        var elements_slice = elements_array[0..3];
+        var node = Btree.new();
+        node.child_ptr  = &elements_slice;
+        return node;
     }
   
 };
