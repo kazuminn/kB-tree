@@ -20,6 +20,8 @@ const Btree = struct {
 pub fn main() anyerror!void {
     std.debug.warn("Congratulations on your first step to writing perfect software in Zen.\n");
     var np = Btree.new();
-    np.child_ptr  = [3]Btree{Btree.new(), Btree.new(), Btree.new());
+    var hoge = &[3]Btree{Btree.new(), Btree.new(), Btree.new()};
+    var huga = hoge[0..3];
+    np.child_ptr  = &huga;
     _ = Btree.new();
 }
