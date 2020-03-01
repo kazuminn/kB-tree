@@ -3,7 +3,7 @@ const std = @import("std");
 const Btree = struct {
     const Self = @This();
 
-    child_ptr: *[]Btree,
+    child_ptr: []Btree,
     has_number: u32,
     element : []i64,
 
@@ -17,29 +17,47 @@ const Btree = struct {
     }
 
     pub fn init() Self {
-        var elements_array = &[3]Btree{Btree.new(), Btree.new(), Btree.new(), Btree.new()};
-        var elements_slice = elements_array[0..3];
         var node = Btree.new();
-        node.child_ptr  = &elements_slice;
+        node.child_ptr  =  &[4]Btree{Btree.new(), Btree.new(), Btree.new(), Btree.new()};
         node.element = &[3]i64{undefined, undefined, undefined};
         return node;
     }
   
-    pub fn insert(self : Self, element : i64, root : Btree) void {
+    pub fn insert(self : Self, insert_element : i64, root : Btree) void {
+        var child_node : Btree = undefined;
         if(root.has_number == 3){
-
+            var i : u32 = 0;
+            while (i < root.has_number){
+                if (insert_element < root.element[i] and insert_element > root.element[i + 1]){
+                    i = i + 1;
+                    break;
+                } else if(insert_element < root.element[0]){
+                    break;
+                } else {
+                    continue;
+                }
+            }
+            child_node =  root.child_ptr[i];
         } else {
             var i : u32 = 0;
             while (i < root.has_number){
-                if (element < root.element[i] and element > root.element[i + 1]){
+                if (insert_element < root.element[i] and insert_element > root.element[i + 1]){
                     i = i + 1;
                     break;
+                } else if(insert_element < root.element[0]){
+                    break;
+                } else {
+                    continue;
                 }
             }
-            if(){
+            if(root.child_ptr[i].has_number == 6){
 
+            } else {
+                child_node =  root.child_ptr[i];
             }
         }
+        //child_node.element[child_node.has_number] = insert_element;
+        //child_node.has_number = child_node.has_number + 1;
     }
 };
 
