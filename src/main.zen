@@ -4,30 +4,46 @@ const Btree = struct {
     const Self = @This();
 
     child_ptr: *[]Btree,
-    has_number: i8,
-    element : i64,
+    has_number: u32,
+    element : []i64,
 
 
     pub fn new() Self {
         return Self{
             .child_ptr = undefined,
             .has_number = 0,
-            .element = 0,
+            .element = undefined,
         };
     }
 
     pub fn init() Self {
-        var elements_array = &[3]Btree{Btree.new(), Btree.new(), Btree.new()};
+        var elements_array = &[3]Btree{Btree.new(), Btree.new(), Btree.new(), Btree.new()};
         var elements_slice = elements_array[0..3];
         var node = Btree.new();
         node.child_ptr  = &elements_slice;
+        node.element = &[3]i64{undefined, undefined, undefined};
         return node;
     }
   
+    pub fn insert(self : Self, element : i64, root : Btree) void {
+        if(root.has_number == 3){
+
+        } else {
+            var i : u32 = 0;
+            while (i < root.has_number){
+                if (element < root.element[i] and element > root.element[i + 1]){
+                    i = i + 1;
+                    break;
+                }
+            }
+            if(){
+
+            }
+        }
+    }
 };
 
 pub fn main() anyerror!void {
-    std.debug.warn("Congratulations on your first step to writing perfect software in Zen.\n");
     var root = Btree.init();
-    _ = Btree.new();
+    root.insert(1, root);
 }
