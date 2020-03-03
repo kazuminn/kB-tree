@@ -62,7 +62,6 @@ const Btree = struct {
             while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {
                 x.element[i + 1] = x.element[i];
             }
-        std.debug.warn("{} \n",insert_element );
             x.element[i] = insert_element;
             x.has_number += 1;
         } else {
@@ -100,6 +99,7 @@ pub fn main() anyerror!void {
         std.debug.warn("{} \n", root.element[0]);
         std.debug.warn("{} \n", root.element[1]);
         std.debug.warn("{} \n", root.element[2]);
+        std.debug.warn("{} \n", root.element[3]);
 }
 
 test "root node" {
