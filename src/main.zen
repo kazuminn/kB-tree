@@ -20,14 +20,14 @@ const Btree = struct {
         };
     }
 
-    pub fn allocNode() Self {
+    pub fn allocNode() Self { 
         var node = Btree.new();
         node.child_ptr  =  &[4]*Btree{&Btree.new(), &Btree.new(), &Btree.new(), &Btree.new()};
         node.element = &[3]i64{undefined, undefined, undefined};
         return node;
     }
   
-    pub fn splitChild(x : Btree, insert_element : i64) void{
+    pub fn splitChild(x : *Btree, insert_element : i64) void{
     }
 
     pub fn insertNonFull(x : *Btree, insert_element : i64) void {
@@ -35,14 +35,15 @@ const Btree = struct {
         if(x.leaf){
             while(i >= 1 and insert_element < x.element[i]) : ( i -= 1 ) {
                 x.element[i + 1] = x.element[i];
-                i -= 1;
             }
+            x.element[i] = insert_element;
+            x.has_number += 1;
         } else {
             while(i >= 1 and insert_element < x.element[i]) : ( i -= 1 ) {}
             i += 1;
-            var y = x.child_ptr[i];
+            var y : *Btree = x.child_ptr[i];
             if(y.child_ptr[i].has_number == 2*x.t - 1){
-                splitChild(y.*, i);
+                splitChild(y, i);
                 if (insert_element > y.element[i]){
                     i += 1; 
                 }
@@ -54,11 +55,11 @@ const Btree = struct {
 
     pub fn insert(self : Self, insert_element : i64, root : *Btree) void {
         var r = root;
-        if(root.has_number == 2*root.t - 1){ //最大7キー入るノードだから
+        if(root.has_number == 2*root.t - 1){ //最大7キー入っているノードなら
             var s = allocNode();
             s.leaf = false;
             s.child_ptr[0] = r;
-            splitChild(s, 1);
+            splitChild(&s, 1);
             insertNonFull(&s, insert_element);
         } else {
             insertNonFull(r, insert_element);
@@ -70,4 +71,5 @@ const Btree = struct {
 pub fn main() anyerror!void {
     var root = Btree.allocNode(); // create root
     root.insert(1, &root);
+    root.insert(2, &root);
 }
