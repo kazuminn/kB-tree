@@ -5,10 +5,9 @@ const Btree = struct {
 
     child_ptr: []*Btree,
     has_number: u32,
-    element : []i64,
-    leaf : bool,
-    t : u8, 
-
+    element: []i64,
+    leaf: bool,
+    t: u8,
 
     pub fn new() Self {
         return Self{
@@ -16,46 +15,71 @@ const Btree = struct {
             .has_number = 0,
             .element = undefined,
             .leaf = true,
-            .t = 4
+            .t = 4,
         };
     }
 
-    pub fn allocNode() Self { 
+    pub fn allocNode() Self {
         var node = Btree.new();
-        node.child_ptr  =  &[4]*Btree{&Btree.new(), &Btree.new(), &Btree.new(), &Btree.new()};
-        node.element = &[3]i64{undefined, undefined, undefined};
+        node.child_ptr = &[4]*Btree{ &Btree.new(), &Btree.new(), &Btree.new(), &Btree.new() };
+        var element = [3]i64{undefined, undefined, undefined};
+        node.element = &element;
         return node;
     }
-  
-    pub fn splitChild(x : *Btree, insert_element : i64) void{
+
+    pub fn splitChild(x: *Btree, i: usize) void {
+        var z = allocNode();
+        var y = x.child_ptr[i];
+        z.leaf = y.leaf;
+        var j: u32 = 1;
+        while (j < x.t - 1) : (j += 1) {
+            z.child_ptr[j] = y.child_ptr[j + x.t];
+        }
+        if (!y.leaf) {
+            j = 1;
+            while (j < x.t) : (j += 1) {
+                z.child_ptr[j] = y.child_ptr[j + x.t];
+            }
+        }
+        y.has_number = x.t - 1;
+        j = x.has_number + 1;
+        while (j > i + 1) : (j -= 1) {
+            x.child_ptr[j + 1] = x.child_ptr[j];
+        }
+        x.child_ptr[i + 1] = &z;
+        j = x.has_number;
+        while (j > i) : (j -= 1) {
+            x.element[j + 1] = x.element[j];
+        }
+        x.element[i] = y.element[j];
+        x.has_number = x.has_number + 1;
     }
 
-    pub fn insertNonFull(x : *Btree, insert_element : i64) void {
-        var i = x.has_number;
-        if(x.leaf){
-            while(i >= 1 and insert_element < x.element[i]) : ( i -= 1 ) {
+    pub fn insertNonFull(x: *Btree, insert_element: i64) void {
+        var i : usize = x.has_number;
+        if (x.leaf) {
+            while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {
                 x.element[i + 1] = x.element[i];
             }
             x.element[i] = insert_element;
             x.has_number += 1;
         } else {
-            while(i >= 1 and insert_element < x.element[i]) : ( i -= 1 ) {}
+            while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {}
             i += 1;
-            var y : *Btree = x.child_ptr[i];
-            if(y.child_ptr[i].has_number == 2*x.t - 1){
+            var y: *Btree = x.child_ptr[i];
+            if (y.child_ptr[i].has_number == 2 * x.t - 1) {
                 splitChild(y, i);
-                if (insert_element > y.element[i]){
-                    i += 1; 
+                if (insert_element > y.element[i]) {
+                    i += 1;
                 }
             }
             insertNonFull(y.child_ptr[i], insert_element);
         }
-
     }
 
-    pub fn insert(self : Self, insert_element : i64, root : *Btree) void {
+    pub fn insert(self: Self, insert_element: i64, root: *Btree) void {
         var r = root;
-        if(root.has_number == 2*root.t - 1){ //最大7キー入っているノードなら
+        if (root.has_number == 2 * root.t - 1) { //最大7キー入っているノードなら
             var s = allocNode();
             s.leaf = false;
             s.child_ptr[0] = r;
@@ -64,7 +88,6 @@ const Btree = struct {
         } else {
             insertNonFull(r, insert_element);
         }
-
     }
 };
 
@@ -72,4 +95,5 @@ pub fn main() anyerror!void {
     var root = Btree.allocNode(); // create root
     root.insert(1, &root);
     root.insert(2, &root);
+    root.insert(3, &root);
 }
