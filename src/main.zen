@@ -57,7 +57,7 @@ const Btree = struct {
             x.element[j + 1] = x.element[j];
         }
         x.element[i] = y.element[x.t- 1];
-        x.has_number = x.has_number + 1;
+        x.has_number +=  1;
     }
 
     pub fn insertNonFull(x: *Btree, insert_element: i64) void {
@@ -73,13 +73,13 @@ const Btree = struct {
             while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {}
             i += 1;
             var y: *Btree = x.child_ptr[i];
-            if (y.child_ptr[i].has_number == 2 * x.t - 1) {
+            if (y.has_number == 2 * x.t - 1) {
                 splitChild(y, i);
                 if (insert_element > y.element[i]) {
                     i += 1;
                 }
             }
-            insertNonFull(y.child_ptr[i], insert_element);
+            insertNonFull(y, insert_element);
         }
     }
 
@@ -116,16 +116,6 @@ test "root node" {
     T.root = &Btree.allocNode(); // create root
     T.root.insert(1, &T);
     T.root.insert(2, &T);
-    ok(T.root.element[1] == 1);
-    ok(T.root.element[2] == 2);
-}
-
-test "root node split" {
-    var root = Btree.allocNode(); // create root
-    root.insert(1, &root);
-    root.insert(2, &root);
-    root.insert(3, &root);
-    root.insert(4, &root);
-    ok(root.element[1] == 1);
-    ok(root.element[2] == 2);
+    ok(T.root.element[0] == 1);
+    ok(T.root.element[1] == 2);
 }
