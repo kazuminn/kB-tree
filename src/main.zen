@@ -14,14 +14,22 @@ const Btree = struct {
     leaf: bool,
     t: u8,
 
-    pub fn allocNode() Self {
+    pub fn new() Self {
+        var child_ptr = [_]*Btree{ undefined, undefined, undefined, undefined};
         return Self{
-            .child_ptr = &[_]*Btree{ undefined, undefined, undefined, undefined},
+            .child_ptr = child_ptr[0..4],
             .has_number = 0,
-            .element = &[_]i64{0, 0, 0},
+            .element = undefined, 
             .leaf = true,
             .t = 2,
         };
+    }
+
+    pub fn allocNode() Self {
+        var node = Btree.new();
+        var element = [_]i64{0, 0, 0};
+        node.element = element[0..3];
+        return node;
     }
 
     pub fn splitChild(x: *Btree, i: usize) void {
@@ -55,10 +63,11 @@ const Btree = struct {
     pub fn insertNonFull(x: *Btree, insert_element: i64) void {
         var i: usize = x.has_number;
         if (x.leaf) {
-            while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {
-                x.element[i + 1] = x.element[i];
+            while (i >= 1 and insert_element < x.element[i - 1]) : (i -= 1) {
+                x.element[i] = x.element[i - 1];
             }
             x.element[i] = insert_element;
+            std.debug.warn("{} \n", x.element[i]);
             x.has_number += 1;
         } else {
             while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {}
@@ -95,6 +104,7 @@ pub fn main() anyerror!void {
     T.root.insert(1, &T);
     T.root.insert(2, &T);
     T.root.insert(3, &T);
+    T.root.insert(4, &T);
     std.debug.warn("{} \n", T.root.element[0]);
     std.debug.warn("{} \n", T.root.element[1]);
     std.debug.warn("{} \n", T.root.element[2]);
