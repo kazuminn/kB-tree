@@ -16,9 +16,9 @@ const Btree = struct {
 
     pub fn allocNode() Self {
         return Self{
-            .child_ptr = &[_]*Btree{ undefined, undefined, undefined, undefined },
+            .child_ptr = &[_]*Btree{ undefined, undefined, undefined, undefined},
             .has_number = 0,
-            .element = &[_]i64{ undefined, undefined, undefined },
+            .element = &[_]i64{0, 0, 0},
             .leaf = true,
             .t = 2,
         };
@@ -58,7 +58,6 @@ const Btree = struct {
             while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {
                 x.element[i + 1] = x.element[i];
             }
-            std.debug.warn("{} \n", x.element[i]);
             x.element[i] = insert_element;
             x.has_number += 1;
         } else {
