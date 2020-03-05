@@ -70,7 +70,6 @@ const Btree = struct {
                 x.element[i] = x.element[i - 1];
             }
             x.element[i] = insert_element;
-            std.debug.warn("{} \n", x.element[i]);
             x.has_number += 1;
         } else {
             while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {}
