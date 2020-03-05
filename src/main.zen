@@ -1,4 +1,5 @@
 const std = @import("std");
+const heap = std.heap;
 const ok = std.testing.ok;
 
 const Root = struct {
@@ -15,9 +16,12 @@ const Btree = struct {
     t: u8,
 
     pub fn new() Self {
-        var child_ptr = [_]*Btree{ undefined, undefined, undefined, undefined};
+        var allocator = heap.c_allocator;
+        var child_ptr = heap.alloc(allocator, *Btree, 4) catch |err| { 
+                            std.debug.panic("can not alloc");
+                        };
         return Self{
-            .child_ptr = child_ptr[0..4],
+            .child_ptr = child_ptr,
             .has_number = 0,
             .element = undefined, 
             .leaf = true,
@@ -85,7 +89,7 @@ const Btree = struct {
 
     pub fn insert(self: Self, insert_element: i64, T: *Root) void {
         var r = T.root;
-        if (r.has_number == 2 * r.t - 1) { //最大7キー入っているノードなら
+        if (r.has_number == 2 * r.t - 1) { 
             var s = allocNode();
             T.root = &s;
             s.leaf = false;
