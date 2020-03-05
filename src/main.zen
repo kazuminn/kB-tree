@@ -49,7 +49,7 @@ const Btree = struct {
                 z.child_ptr[j] = y.child_ptr[j + t];
             }
         }
-        y.has_number -= 1;
+        y.has_number = t -1;
         j = x.has_number + 1;
         while (j > i + 1) : (j -= 1) {
             x.child_ptr[j + 1] = x.child_ptr[j];
@@ -70,12 +70,13 @@ const Btree = struct {
                 x.element[i] = x.element[i - 1];
             }
             x.element[i] = insert_element;
+            std.debug.warn("{} \n", x.element[i]);
             x.has_number += 1;
         } else {
             while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {}
             var y = x.child_ptr[i];
             if (y.has_number == 2 * t - 1) {
-                splitChild(y, i);
+                splitChild(x, i);
                 if (insert_element > y.element[i]) {
                     i += 1;
                 }
@@ -106,6 +107,10 @@ pub fn main() anyerror!void {
     T.root.insert(2, &T);
     T.root.insert(3, &T);
     T.root.insert(4, &T);
+    T.root.insert(5, &T);
+    T.root.insert(6, &T);
+    T.root.insert(7, &T);
+    T.root.insert(8, &T);
     std.debug.warn("{} \n", T.root.element[0]);
     std.debug.warn("{} \n", T.root.child_ptr[0].element[0]);
     std.debug.warn("{} \n", T.root.child_ptr[1].element[0]);
