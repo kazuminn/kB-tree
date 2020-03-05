@@ -13,27 +13,23 @@ const Btree = struct {
     has_number: u32,
     element: []i64,
     leaf: bool,
-    t: u8,
+    t: u32,
 
-    pub fn new() Self {
+    pub fn allocNode() Self {
         var allocator = heap.c_allocator;
         var child_ptr = heap.alloc(allocator, *Btree, 4) catch |err| { 
+                            std.debug.panic("can not alloc");
+                        };
+        var element = heap.alloc(allocator, i64, 3) catch |err| { 
                             std.debug.panic("can not alloc");
                         };
         return Self{
             .child_ptr = child_ptr,
             .has_number = 0,
-            .element = undefined, 
+            .element = element, 
             .leaf = true,
             .t = 2,
         };
-    }
-
-    pub fn allocNode() Self {
-        var node = Btree.new();
-        var element = [_]i64{0, 0, 0};
-        node.element = element[0..3];
-        return node;
     }
 
     pub fn splitChild(x: *Btree, i: usize) void {
@@ -75,8 +71,7 @@ const Btree = struct {
             x.has_number += 1;
         } else {
             while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {}
-            i += 1;
-            var y: *Btree = x.child_ptr[i];
+            var y = x.child_ptr[i];
             if (y.has_number == 2 * x.t - 1) {
                 splitChild(y, i);
                 if (insert_element > y.element[i]) {
@@ -108,6 +103,7 @@ pub fn main() anyerror!void {
     T.root.insert(1, &T);
     T.root.insert(2, &T);
     T.root.insert(3, &T);
+    T.root.insert(4, &T);
     std.debug.warn("{} \n", T.root.element[0]);
     std.debug.warn("{} \n", T.root.element[1]);
     std.debug.warn("{} \n", T.root.element[2]);
