@@ -108,7 +108,6 @@ pub fn main() anyerror!void {
     T.root.insert(1, &T);
     T.root.insert(2, &T);
     T.root.insert(3, &T);
-    T.root.insert(4, &T);
     std.debug.warn("{} \n", T.root.element[0]);
     std.debug.warn("{} \n", T.root.element[1]);
     std.debug.warn("{} \n", T.root.element[2]);
