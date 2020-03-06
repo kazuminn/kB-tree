@@ -70,24 +70,24 @@ const Btree = struct {
                 x.element[i] = x.element[i - 1];
             }
             x.element[i] = insert_element;
-            std.debug.warn("{} \n", x.element[i]);
+            //std.debug.warn("{} \n", x.element[i]);
             x.has_number += 1;
         } else {
             while (i >= 1 and insert_element < x.element[i]) : (i -= 1) {}
             var y = x.child_ptr[i];
-            if (y.has_number == 2 * t - 1) {
+            if (y.has_number == 2 * t - 1) { //root以外のノードがいっぱいなら
                 splitChild(x, i);
                 if (insert_element > y.element[i]) {
                     i += 1;
                 }
             }
-            insertNonFull(y, insert_element);
+            insertNonFull(x.child_ptr[i], insert_element);
         }
     }
 
     pub fn insert(self: Self, insert_element: i64, T: *Root) void {
         var r = T.root;
-        if (r.has_number == 2 * t - 1) { 
+        if (r.has_number == 2 * t - 1) { //rootがいっぱいなら
             var s = allocNode();
             T.root = s;
             s.leaf = false;
@@ -111,10 +111,15 @@ pub fn main() anyerror!void {
     T.root.insert(6, &T);
     T.root.insert(7, &T);
     T.root.insert(8, &T);
+    T.root.insert(9, &T);
     std.debug.warn("{} \n", T.root.element[0]);
+    std.debug.warn("{} \n", T.root.element[1]);
+    std.debug.warn("{} \n", T.root.element[2]);
     std.debug.warn("{} \n", T.root.child_ptr[0].element[0]);
     std.debug.warn("{} \n", T.root.child_ptr[1].element[0]);
-    std.debug.warn("{} \n", T.root.child_ptr[1].element[1]);
+    std.debug.warn("{} \n", T.root.child_ptr[2].element[0]);
+    std.debug.warn("{} \n", T.root.child_ptr[3].element[0]);
+    std.debug.warn("{} \n", T.root.child_ptr[3].element[1]);
 }
 
 test "root node" {
@@ -139,4 +144,36 @@ test "once split child node" {
     ok(T.root.element[0] == 2);
     ok(T.root.child_ptr[1].element[0] == 3);
     ok(T.root.child_ptr[1].element[1] == 4);
+}
+
+test "two split child node" {
+    var T : Root = undefined;
+    T.root = Btree.allocNode(); // create root
+    T.root.insert(1, &T);
+    T.root.insert(2, &T);
+    T.root.insert(3, &T);
+    T.root.insert(4, &T);
+    T.root.insert(5, &T);
+    T.root.insert(6, &T);
+    T.root.insert(7, &T);
+    T.root.insert(8, &T);
+    ok(T.root.child_ptr[0].element[0] == 1);
+    ok(T.root.element[0] == 2);
+    ok(T.root.child_ptr[1].element[0] == 3);
+    ok(T.root.element[1] == 4);
+    ok(T.root.child_ptr[2].element[0] == 5);
+    ok(T.root.element[2] == 6);
+    ok(T.root.child_ptr[3].element[0] == 7);
+    ok(T.root.child_ptr[3].element[1] == 8);
+}
+
+test "split root node" {
+    var T : Root = undefined;
+    T.root = Btree.allocNode(); // create root
+    T.root.insert(1, &T);
+    T.root.insert(2, &T);
+    T.root.insert(3, &T);
+    ok(T.root.element[0] == 1);
+    ok(T.root.element[1] == 2);
+    ok(T.root.element[2] == 3);
 }
